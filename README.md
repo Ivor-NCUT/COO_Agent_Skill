@@ -264,6 +264,10 @@ Agent COO 的知识库是完全开放的。你不需要安装整套 Skill 才能
 | 脚本 | 用途 |
 |---|---|
 | `notion-onboarding.sh` | Notion MCP 配置向导 |
+| `notion-scan-daily.sh` | 每日扫描 Notion 工作区 |
+| `notion-create-page.sh` | 创建 Notion 页面/数据库记录 |
+| `notion-update-db.sh` | 更新数据库记录状态 |
+| `notion-query-db.sh` | 查询数据库（支持过滤和排序） |
 
 ### Obsidian
 
