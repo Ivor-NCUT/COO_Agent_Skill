@@ -4,6 +4,7 @@ description: |
   Agent COO 知识沉淀子 skill。识别重复工作、捕捉精彩洞察、建议写成 Skill/SOP、整理材料到业务系统。
   触发方式：/coo-knowledge-ingestion、/知识沉淀、「今天有什么值得记录的内容」「有什么可以写成 Skill」「帮我整理到系统里」
   本 skill 被 /coo 主入口路由调用，也可直接触发。
+  支持平台：飞书(lark-cli)、Notion(MCP)、Obsidian(CLI)。根据用户配置自动适配写入方式。
 ---
 
 # coo-knowledge-ingestion：知识沉淀
@@ -52,18 +53,37 @@ description: |
 
 ### Step 3：整理到系统
 
-将识别出的沉淀机会分类整理：
+将识别出的沉淀机会分类整理到对应平台：
 
-- **SOP 建议**：进入「SOP 文档库」或「方法论」知识包
-- **Skill 建议**：进入「Skill 知识包」或「Agent Skill 文档库」
-- **选题建议**：进入「内容/作品管理表」或「Build in Public 分享机会表」
-- **素材建议**：进入「内容原子素材表」
-- **方法论**：进入「重要知识结晶」
+**飞书**：
+- **SOP 建议**：写入「SOP 文档库」文档或「方法论」知识包
+- **Skill 建议**：写入「Skill 知识包」或「Agent Skill 文档库」
+- **选题建议**：写入「内容/作品管理表」或「Build in Public 分享机会表」
+- **素材建议**：写入「内容原子素材表」
+- **方法论**：写入「重要知识结晶」
+
+**Notion**：
+- **SOP 建议**：创建页面到 SOP 数据库
+- **Skill 建议**：创建页面到 Skill 知识库
+- **选题建议**：创建记录到内容管理数据库
+- **素材建议**：创建记录到原子素材数据库
+
+**Obsidian**：
+- **SOP 建议**：创建笔记到 `Services/` 或 `Strategy/` 目录
+- **Skill 建议**：创建笔记到 `Services/` 目录
+- **选题建议**：创建笔记到 `Content/` 目录，使用 frontmatter 标记选题类型
+- **素材建议**：创建笔记到 `Intelligence/` 目录
 
 **整理原则**：
 - 先问后写：对于不确定的归类，先向用户确认。
 - 保留来源：每条记录标注来源和时间。
 - 不重复录入：已存在的记录只更新状态。
+
+### 各平台写入方式
+
+- **飞书**：`lark-doc docs +create` 创建文档，`lark-sheets sheets +write` 更新表格
+- **Notion**：`post-page` 创建页面，`query-data-source` 查询后 `patch-page` 更新
+- **Obsidian**：`obsidian create name="..." content="..."` 创建笔记，`obsidian append file="..." content="..."` 追加内容
 
 ## 输出规范
 

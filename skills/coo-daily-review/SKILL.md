@@ -1,9 +1,10 @@
 ---
 name: coo-daily-review
 description: |
-  Agent COO 每日复盘子 skill。扫描当日工作上下文（飞书文档、会议记录、消息、待办、日历），执行系统维护、知识沉淀、待办清理、战略对齐四类动作，生成 COO 日报。
+  Agent COO 每日复盘子 skill。扫描当日工作上下文（文档、会议记录、消息、待办、日历），执行系统维护、知识沉淀、待办清理、战略对齐四类动作，生成 COO 日报。
   触发方式：/coo-daily-review、/每日复盘、「COO，帮我做今日复盘」「今天的工作整理一下」
   本 skill 被 /coo 主入口路由调用，也可直接触发。
+  支持平台：飞书(lark-cli)、Notion(MCP)、Obsidian(CLI)。根据用户配置自动适配扫描方式。
 ---
 
 # coo-daily-review：每日复盘
@@ -20,13 +21,28 @@ description: |
 
 ### Step 1：扫描当日工作上下文
 
-读取以下信息源（根据用户实际配置选择可用渠道）：
+根据用户配置的主平台，选择对应的扫描方式：
 
-- **飞书文档**：当天创建或编辑的文档（通过 lark-doc skill 或飞书 API）
-- **会议记录**：当天的会议记录、妙记（通过 lark-minutes 或 lark-vc skill）
-- **消息记录**：当天的 IM 消息（通过 lark-im skill，注意隐私边界）
-- **待办任务**：任务列表状态（通过 lark-task skill）
-- **日历日程**：当天的会议和日程（通过 lark-calendar skill）
+**飞书生态**：
+- **文档**：当天创建或编辑的文档（`lark-doc docs +list` 或 `docs +search`）
+- **会议记录**：当天的会议记录、妙记（`lark-minutes minutes +list` 或 `lark-vc vc meeting +search`）
+- **消息记录**：当天的 IM 消息（`lark-im im +search`，注意隐私边界）
+- **待办任务**：任务列表状态（`lark-task task +get-my-tasks`）
+- **日历日程**：当天的会议和日程（`lark-calendar calendar +agenda`）
+
+**Notion (MCP)**：
+- **数据库记录**：当天创建或更新的记录（`query-data-source` + filter）
+- **页面**：当天编辑的页面（`post-search` + sort）
+- **任务**：任务数据库中的今日任务（`query-data-source` + status filter）
+- **日历**：如使用 Notion Calendar，查询相关数据库
+
+**Obsidian (CLI)**：
+- **今日日记**：`obsidian daily` 读取或创建今日日记
+- **最近修改**：`obsidian search query=""` 查找今日修改的文件
+- **待办任务**：搜索 `- [ ]` 标记的任务
+- **会议记录**：`obsidian search:context query="会议"` 查找相关笔记
+
+**通用渠道**（所有平台）：
 - **Git 提交**：当天的代码提交记录（如有）
 - **用户主动提供**：用户直接在对话中粘贴的材料
 
@@ -39,16 +55,23 @@ description: |
 
 #### A. 系统维护（表格、文档、知识库更新）
 
-- 将当天的工作产出分类，更新到对应的管理表格：
-  - 项目排期表（新项目、新进展、新阻塞）
-  - 任务协同表（已完成、进行中、待启动）
-  - 客户/合作方管理表（新沟通、新承诺、新风险）
-  - 内容/作品管理表（新素材、新选题、新发布）
-  - 情报与机会表（新线索、新工具、新趋势）
-- 更新对应文档：
-  - 会议记录合集（按项目或日期归档）
-  - 服务交付说明书（如有新交付或新标准）
-  - 业务模型说明书（如有新判断或调整）
+将当天的工作产出分类，更新到对应的管理表格/数据库：
+
+- **项目排期表**（新项目、新进展、新阻塞）
+- **任务协同表**（已完成、进行中、待启动）
+- **客户/合作方管理表**（新沟通、新承诺、新风险）
+- **内容/作品管理表**（新素材、新选题、新发布）
+- **情报与机会表**（新线索、新工具、新趋势）
+
+更新对应文档：
+- **会议记录合集**（按项目或日期归档）
+- **服务交付说明书**（如有新交付或新标准）
+- **业务模型说明书**（如有新判断或调整）
+
+**各平台写入方式**：
+- 飞书：`lark-sheets sheets +write` 更新表格，`lark-doc docs +create` 创建文档
+- Notion：`query-data-source` 查询后 `patch-page` 更新，`post-page` 创建新页面
+- Obsidian：`obsidian create name="..." content="..."` 创建笔记，`obsidian append file="..." content="..."` 追加内容
 
 **维护原则**：
 - 先问后写：对于不确定的归类，先向用户确认，再写入系统。
@@ -81,6 +104,11 @@ description: |
 - 检查 Agent 自身的 memory、已安装的 skill、插件、MCP、CLI 能力，判断是否有可以直接自动完成的待办。
 - 输出：待办清理报告，包括新增待办、过期提醒、可自动完成项。
 
+**各平台待办扫描**：
+- 飞书：`lark-task task +get-my-tasks`
+- Notion：`query-data-source` 查询任务数据库
+- Obsidian：搜索 `- [ ]` 标记的任务，检查 frontmatter 中的 deadline
+
 #### D. 战略对齐（方向一致性检查）
 
 - 读取用户的战略文档（如业务模型说明书、CEO 工作原则、长期目标文档）。
@@ -89,6 +117,11 @@ description: |
   - 用户表达的观点是否和之前写的原则矛盾？
   - 资源分配是否符合优先级？
 - 如果发现冲突，主动提出："你今天在 X 中表达了 Y，这和战略文档中的 Z 存在冲突，是否需要调整？"
+
+**各平台战略文档读取**：
+- 飞书：`lark-doc docs +fetch --token <战略文档token>`
+- Notion：`get-page` 读取战略页面
+- Obsidian：`obsidian read file="Strategy/战略方向.md"`
 
 ### Step 3：生成 COO 日报
 
@@ -134,4 +167,6 @@ description: |
 ## 依赖
 
 - 飞书生态：lark-doc、lark-sheets、lark-task、lark-calendar、lark-minutes、lark-im、lark-vc 等 skill
+- Notion MCP：notion-mcp-server (Remote 或 Local)
+- Obsidian CLI：obsidian CLI v1.12+
 - Memory：Agent 需要长期记忆来识别重复工作和历史对比

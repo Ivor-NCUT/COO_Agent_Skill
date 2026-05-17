@@ -4,6 +4,7 @@ description: |
   Agent COO Skill 迭代子 skill。用工作产出持续迭代 Skill，支持三轮迭代：对话中迭代、版本对比迭代（六维分析框架）、外部输入迭代。
   触发方式：/coo-skill-iteration、/skill迭代、「帮我迭代 skill」「这个 skill 需要优化」「对比两个版本」
   本 skill 被 /coo 主入口路由调用，也可直接触发。
+  支持平台：飞书(lark-cli)、Notion(MCP)、Obsidian(CLI)。迭代逻辑不依赖特定平台。
 ---
 
 # coo-skill-iteration：Skill 迭代
@@ -114,8 +115,14 @@ description: |
 - **分析要结构化**：必须按六维框架拆解，不能跳过维度。
 - **推断用户意图**：每个改动背后，用户想解决什么问题？（如：拒绝正确的废话、制造反常识、建立可信度）
 - **保留 bad case**：在 SKILL.md 末尾维护一个 bad case 清单，记录"之前这样写，用户改成了那样"。
-- **区分平台**：飞书 CLI 只是写入渠道，迭代逻辑不依赖特定平台。如果用户用其他工具（Notion、Google Docs），对比逻辑一样适用。
+- **区分平台**：飞书 CLI 只是写入渠道，迭代逻辑不依赖特定平台。如果用户用其他工具（Notion、Obsidian），对比逻辑一样适用。
 - **用户确认**：修改 SKILL.md 前，先展示修改草案，等用户确认后再写入。
+
+## 各平台写入方式
+
+- **飞书**：`lark-doc docs +update --token <skill_doc_token>` 更新 Skill 文档
+- **Notion**：`patch-page` 更新 Skill 页面
+- **Obsidian**：`obsidian read file="..."` 读取后，`obsidian append file="..." content="..."` 追加 bad case
 
 ## 输出规范
 

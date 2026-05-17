@@ -4,6 +4,7 @@ description: |
   Agent COO 待办清理子 skill。扫描承诺、检查逾期、识别可自动完成的待办，确保遗留事项不被遗漏。
   触发方式：/coo-todo-cleanup、/待办清理、「帮我检查遗留待办」「有哪些承诺没兑现」
   本 skill 被 /coo 主入口路由调用，也可直接触发。
+  支持平台：飞书(lark-cli)、Notion(MCP)、Obsidian(CLI)。根据用户配置自动适配扫描方式。
 ---
 
 # coo-todo-cleanup：待办清理
@@ -49,6 +50,11 @@ description: |
    - 待办有 deadline，但已逾期
    - 风险：影响信任
 
+**各平台待办扫描方式**：
+- **飞书**：`lark-task task +get-my-tasks` 获取任务列表
+- **Notion**：`query-data-source` 查询任务数据库，筛选未完成状态
+- **Obsidian**：`obsidian search query="- [ ]"` 搜索未完成任务，检查 frontmatter 中的 deadline
+
 ### Step 3：检查可自动完成项
 
 检查 Agent 自身的 memory、已安装的 skill、插件、MCP、CLI 能力，判断是否有可以直接自动完成的待办：
@@ -57,6 +63,8 @@ description: |
 - 可以用 lark-sheets skill 更新的表格
 - 可以用 lark-task skill 创建的任务
 - 可以用其他 skill 自动处理的事项
+- 可以用 Notion MCP `post-page` 创建的页面
+- 可以用 Obsidian CLI `obsidian create` 创建的笔记
 
 **原则**：
 - 需要用户业务判断的，不自动做（如报价单内容）

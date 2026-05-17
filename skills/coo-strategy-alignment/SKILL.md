@@ -4,6 +4,7 @@ description: |
   Agent COO 战略对齐子 skill。对比当日工作与战略文档，识别逻辑冲突，确保执行方向与长期战略一致。
   触发方式：/coo-strategy-alignment、/战略对齐、「我的战略文档和最近的工作方向是否一致」「方向检查」
   本 skill 被 /coo 主入口路由调用，也可直接触发。
+  支持平台：飞书(lark-cli)、Notion(MCP)、Obsidian(CLI)。根据用户配置自动适配读取方式。
 ---
 
 # coo-strategy-alignment：战略对齐
@@ -20,7 +21,22 @@ description: |
 
 ### Step 1：读取战略文档
 
-读取用户的战略文档：
+根据用户配置的主平台，选择对应方式读取战略文档：
+
+**飞书**：
+- `lark-doc docs +fetch --token <战略文档token>` 读取战略文档
+- `lark-doc docs +fetch --token <CEO工作原则文档token>` 读取原则文档
+
+**Notion**：
+- `get-page` 读取战略页面
+- `get-block-children` 读取页面详细内容
+- `query-data-source` 查询战略相关数据库
+
+**Obsidian**：
+- `obsidian read file="Strategy/战略方向.md"` 读取战略文档
+- `obsidian search:context query="战略"` 搜索战略相关内容
+
+读取的战略文档包括：
 - 业务模型说明书
 - CEO 工作原则
 - 长期目标文档
