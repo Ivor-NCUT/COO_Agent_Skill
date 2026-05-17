@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent COO"
+  short_description: "你的数字运营合伙人，主动扫描工作上下文、维护业务系统、沉淀知识资产、对齐战略方向"
+  default_prompt: "COO，帮我做今日复盘"
