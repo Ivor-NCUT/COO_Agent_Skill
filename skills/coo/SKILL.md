@@ -3,7 +3,8 @@ name: coo
 description: |
   Agent COO 主入口。你的数字运营合伙人，负责每日工作复盘、业务系统维护、知识资产沉淀、战略方向对齐、待办清理、Skill 迭代建议、内容选题挖掘。
   触发方式：/coo、/COO、「COO，帮我做今日复盘」「帮我检查遗留待办」「今天有什么值得记录的内容」「帮我迭代 skill」「我的战略文档和最近的工作方向是否一致」
-  支持平台：飞书(lark-cli)、Notion(MCP)、Obsidian(CLI)。用户 onboarding 时选择主平台，COO 自动适配对应平台的调用方式。
+  支持主平台：飞书(lark-cli)、Notion(MCP)、Obsidian(CLI)。用户 onboarding 时选择主平台，COO 自动适配对应平台的调用方式。
+  支持增强平台：Flomo(MCP)。用于快速记录灵感和洞察，不作为主业务系统。
 ---
 
 # coo：Agent COO 主入口
@@ -26,7 +27,9 @@ description: |
 
 ## 平台适配
 
-Agent COO 支持三个平台，用户 onboarding 时选择主平台：
+Agent COO 支持三个主平台和一个增强平台：
+
+### 主平台（业务系统）
 
 | 平台 | 技术方案 | 适用场景 |
 |---|---|---|
@@ -34,11 +37,24 @@ Agent COO 支持三个平台，用户 onboarding 时选择主平台：
 | **Notion** | Notion MCP Remote (OAuth) | 海外团队、喜欢数据库视图、需要灵活页面结构 |
 | **Obsidian** | Obsidian CLI (v1.12+) + MCP 搜索增强 | 个人知识管理、本地优先、Markdown 原生 |
 
+### 增强平台（灵感记录）
+
+| 平台 | 技术方案 | 适用场景 |
+|---|---|---|
+| **Flomo** | MCP Server (`@mcp-so/mcp-server-flomo`) | 快速记录灵感、捕捉洞察、临时想法 |
+
+**Flomo 定位**：
+- 不是主业务系统，而是**轻量灵感入口**
+- 用于快速记录精彩洞察、临时想法
+- 重要内容后续整理到主系统（飞书/Notion/Obsidian）
+- 使用场景：会议中的关键灵感、日常浏览的反直觉认知、需要后续整理的临时想法
+
 ### 平台选择逻辑
 
 1. **首次使用**：询问用户主平台（飞书/Notion/Obsidian）
 2. **已配置**：读取 `~/.coo/config.json` 中的 `platform` 字段
 3. **混用模式**：支持分功能使用不同平台（如文档用 Obsidian，数据库用 Notion）
+4. **Flomo 增强**：如果检测到 Flomo 配置，在知识沉淀时同时写入 Flomo
 
 ### 各平台调用方式
 
@@ -59,6 +75,11 @@ Agent COO 支持三个平台，用户 onboarding 时选择主平台：
 - 创建笔记：`obsidian create name="xxx" content="..."`
 - 搜索：`obsidian search:context query="xxx"`
 - 日记：`obsidian daily` / `obsidian daily:append content="..."`
+
+**Flomo (MCP)**：
+- 写入笔记：`write_note` (参数：`content`)
+- 脚本备用：`./scripts/flomo-write.sh --content "..." --tags "标签1,标签2"`
+- 标签格式：在 content 中使用 `#标签名`
 
 ## 工作流程
 

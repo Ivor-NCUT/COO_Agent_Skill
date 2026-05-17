@@ -4,7 +4,7 @@ description: |
   Agent COO 知识沉淀子 skill。识别重复工作、捕捉精彩洞察、建议写成 Skill/SOP、整理材料到业务系统。
   触发方式：/coo-knowledge-ingestion、/知识沉淀、「今天有什么值得记录的内容」「有什么可以写成 Skill」「帮我整理到系统里」
   本 skill 被 /coo 主入口路由调用，也可直接触发。
-  支持平台：飞书(lark-cli)、Notion(MCP)、Obsidian(CLI)。根据用户配置自动适配写入方式。
+  支持平台：飞书(lark-cli)、Notion(MCP)、Obsidian(CLI)、Flomo(MCP)。根据用户配置自动适配写入方式。
 ---
 
 # coo-knowledge-ingestion：知识沉淀
@@ -74,16 +74,26 @@ description: |
 - **选题建议**：创建笔记到 `Content/` 目录，使用 frontmatter 标记选题类型
 - **素材建议**：创建笔记到 `Intelligence/` 目录
 
+**Flomo**：
+- **快速记录**：将精彩洞察、灵感、临时想法快速写入 Flomo
+- **标签管理**：使用 `#项目名` `#洞察` `#选题` 等标签分类
+- **使用场景**：
+  - 会议中捕捉的关键灵感
+  - 日常浏览中的反直觉认知
+  - 需要后续整理的临时想法
+
 **整理原则**：
 - 先问后写：对于不确定的归类，先向用户确认。
 - 保留来源：每条记录标注来源和时间。
 - 不重复录入：已存在的记录只更新状态。
+- **Flomo 作为轻量入口**：快速记录先用 Flomo，重要内容再整理到主系统。
 
 ### 各平台写入方式
 
 - **飞书**：`lark-doc docs +create` 创建文档，`lark-sheets sheets +write` 更新表格
 - **Notion**：`post-page` 创建页面，`query-data-source` 查询后 `patch-page` 更新
 - **Obsidian**：`obsidian create name="..." content="..."` 创建笔记，`obsidian append file="..." content="..."` 追加内容
+- **Flomo**：`write_note` MCP 工具写入，`./scripts/flomo-write.sh` 脚本备用
 
 ## 输出规范
 
